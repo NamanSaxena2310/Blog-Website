@@ -1,6 +1,7 @@
 const express = require('express')
 const path = require('path')
 const ejs = require('ejs')
+const fileUpload = require('express-fileupload')
 const mongoose = require('mongoose')
 const BlogPost = require('./models/BlogPost')
 const app = express()
@@ -14,11 +15,12 @@ mongoose.connect(URL)
     }).catch((error)=>{
         console.log("Unable to connect " + error)
     })
-
+ app.use(fileUpload())
 app.set('view engine', 'ejs')
 
 app.use(express.static('public')) // Telling the express server to use public folder for static files 
 app.use(express.json())
+
 app.use(express.urlencoded({ extended: true })); // It helps in parsing form data which is in url-encoded form and helps to add the form data in req.body
 
 app.get('/',async(req,res)=>{
@@ -63,14 +65,17 @@ app.get('/post/:id',async (req,res)=>{
 })
 
 app.post('/posts/store', async (req,res)=>{
-    const {title,description} = req.body
-
+   
     try {
-        await BlogPost.create({
+        const {title,description} = req.body
+        const image = req.files.image
+        image.mv(path.resolve(__dirname,'public/img',image.name))
+       const blogPost = await BlogPost.create({
             title,
-            body:description
+            body:description,
+            image:'/img/' + image.name
         })
-
+        console.log(blogPost)
         res.redirect('/')
     } catch (error) {
         console.log(error)
