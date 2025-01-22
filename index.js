@@ -69,7 +69,7 @@ app.post('/posts/store', async (req,res)=>{
     try {
         const {title,description} = req.body
         const image = req.files.image
-        image.mv(path.resolve(__dirname,'public/img',image.name))
+        image.mv(path.resolve(__dirname,'public/assets/img',image.name))
        const blogPost = await BlogPost.create({
             title,
             body:description,
