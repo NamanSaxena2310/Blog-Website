@@ -57,6 +57,11 @@ app.get('/posts/new', (req,res)=> {
 
 })
 
+app.get('/post/:id',async (req,res)=>{
+    const blogPost = await BlogPost.findById(req.params.id)
+    res.render('post',{blogPost})
+})
+
 app.post('/posts/store', async (req,res)=>{
     const {title,description} = req.body
 
