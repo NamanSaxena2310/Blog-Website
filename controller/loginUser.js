@@ -7,6 +7,7 @@ module.exports = async (req,res)=>{
 if (user) { //User Found Then 
     bcrypt.compare(password,user.password,(err,result)=>{
       if (result) {
+        req.session.userId = user._id
         res.redirect('/')
       }else{
         res.redirect('/auth/login')

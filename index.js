@@ -2,6 +2,7 @@ const express = require('express')
 const path = require('path')
 const ejs = require('ejs')
 const fileUpload = require('express-fileupload')
+const expressSession = require('express-session')
 const mongoose = require('mongoose')
 const BlogPost = require('./models/BlogPost')
 const app = express()
@@ -17,8 +18,10 @@ const storeUSerController = require('./controller/storeUser')
 const loginController = require('./controller/login')
 const loginUserController = require('./controller/loginUser')
 
-//Middlewares 
+//MiddleWares
+const authMiddleware  = require('./middlewares/authMiddleware')
 const validationMiddleware = require('./middlewares/validationMiddleware')
+const redirectIfAuthenticatedMiddleware = require('./middlewares/redirectIfAuthenticatedMiddleware')
 
 const URL = 'mongodb+srv://admin:admin@learningmongodb.zkb7g.mongodb.net/Blog-App?retryWrites=true&w=majority&appName=LearningMongoDB'
 
@@ -38,7 +41,9 @@ app.use(express.static('public')) // Telling the express server to use public fo
 app.use(express.json())
 
 app.use(express.urlencoded({ extended: true })); // It helps in parsing form data which is in url-encoded form and helps to add the form data in req.body
-
+app.use(expressSession({
+    secret:"This Naman's Secret key"
+}))
 app.get('/',homeController)
 
 
@@ -46,19 +51,19 @@ app.get('/post',(req,res)=>{
     res.render('post')
 })
 
-app.get('/posts/new',newPostController )
+app.get('/posts/new',authMiddleware,newPostController )
 
 app.get('/post/:id',getPostController)
 
-app.post('/posts/store', storePostController )
+app.post('/posts/store',authMiddleware, storePostController )
 
-app.get('/auth/register', newUserController)
+app.get('/auth/register',redirectIfAuthenticatedMiddleware, newUserController)
 
-app.get('/auth/login',loginController)
+app.get('/auth/login',redirectIfAuthenticatedMiddleware,loginController)
 
-app.post('/users/register', storeUSerController)
+app.post('/users/register',redirectIfAuthenticatedMiddleware, storeUSerController)
 
-app.post('/users/login', loginUserController)
+app.post('/users/login',redirectIfAuthenticatedMiddleware, loginUserController)
 
 app.listen(4000,()=>{
     console.log("App is running on port 4000")
