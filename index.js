@@ -4,6 +4,7 @@ const ejs = require('ejs')
 const fileUpload = require('express-fileupload')
 const expressSession = require('express-session')
 const mongoose = require('mongoose')
+const flash = require('flash')
 const BlogPost = require('./models/BlogPost')
 const app = express()
 
@@ -54,6 +55,8 @@ app.use('*',(req,res,next)=>{
     loggedIn = req.session.userId
     next()
 })
+
+app.use(flash())
 
 app.get('/',homeController)
 

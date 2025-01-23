@@ -1,4 +1,7 @@
 
 module.exports = (req,res)=>{
- res.render('register')
+  const validationErrors = req.flash('validationErrors')
+ res.render('register',{
+  errors:validationErrors
+ })
 }
