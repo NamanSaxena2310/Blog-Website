@@ -40,8 +40,17 @@
 
 
                                 <div class="form-floating">
-                                    <textarea class="form-control" id="discription" name="description" placeholder="Enter your description here..." style="height: 12rem" ></textarea>
-                                    <label for="message">Description</label>
+                                    <textarea class="form-control" id="discription" name="description"  style="height: 12rem" ></textarea>
+
+                                    <script>
+                                        $('#discription').summernote({
+                                          placeholder: 'Hello Bootstrap 4',
+                                          tabsize: 2,
+                                          height: 100
+                                        });
+                                      </script>
+
+                                    <!-- <label for="message">Description</label> -->
                                     
                                 </div>
 

@@ -4,16 +4,18 @@ const uniqueValidator = require('mongoose-unique-validator')
 const userSchema = mongoose.Schema({
   username:{
     type:String,
-    required:true,
-    unique:true
+    required:[true,"Please provide username"],
+    unique:[true,"Username Already taken, Please Provide a unique username"]
   },
   password:{
     type: String,
-    required: true,
+    required: [true,"Please provide password"],
   }
 })
 
-userSchema.plugin(uniqueValidator)
+userSchema.plugin(uniqueValidator,{
+  message: '{PATH} must be unique. "{VALUE}" is already in use.'
+})
 
 userSchema.pre('save',function(next){
   const user = this

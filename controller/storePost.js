@@ -9,7 +9,8 @@ module.exports = async (req,res)=>{
      const blogPost = await BlogPost.create({
           title,
           body:description,
-          image:'/img/' + image.name
+          image:'/img/' + image.name,
+          userid:req.session.userId
       })
       console.log(blogPost)
       res.redirect('/')
