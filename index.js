@@ -17,6 +17,7 @@ const newUserController = require('./controller/newUser')
 const storeUSerController = require('./controller/storeUser')
 const loginController = require('./controller/login')
 const loginUserController = require('./controller/loginUser')
+const logoutController = require('./controller/logoutController')
 
 //MiddleWares
 const authMiddleware  = require('./middlewares/authMiddleware')
@@ -37,6 +38,10 @@ mongoose.connect(URL)
  app.use(fileUpload())
 app.set('view engine', 'ejs')
 
+global.loggedIn = null
+
+
+
 app.use(express.static('public')) // Telling the express server to use public folder for static files 
 app.use(express.json())
 
@@ -44,6 +49,12 @@ app.use(express.urlencoded({ extended: true })); // It helps in parsing form dat
 app.use(expressSession({
     secret:"This Naman's Secret key"
 }))
+
+app.use('*',(req,res,next)=>{
+    loggedIn = req.session.userId
+    next()
+})
+
 app.get('/',homeController)
 
 
@@ -64,6 +75,12 @@ app.get('/auth/login',redirectIfAuthenticatedMiddleware,loginController)
 app.post('/users/register',redirectIfAuthenticatedMiddleware, storeUSerController)
 
 app.post('/users/login',redirectIfAuthenticatedMiddleware, loginUserController)
+
+app.get('/auth/logout',logoutController)
+
+app.use((req,res)=>{
+    res.render('notfound')
+})
 
 app.listen(4000,()=>{
     console.log("App is running on port 4000")
