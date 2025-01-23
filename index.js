@@ -6,6 +6,15 @@ const mongoose = require('mongoose')
 const BlogPost = require('./models/BlogPost')
 const app = express()
 
+//Controllers
+
+const newPostController = require('./controller/newPost')
+const homeController = require('./controller/home')
+const getPostController = require('./controller/getPost')
+const storePostController = require('./controller/storePost')
+
+//Middlewares 
+const validationMiddleware = require('./middlewares/validationMiddleware')
 
 const URL = 'mongodb+srv://admin:admin@learningmongodb.zkb7g.mongodb.net/Blog-App?retryWrites=true&w=majority&appName=LearningMongoDB'
 
@@ -15,6 +24,9 @@ mongoose.connect(URL)
     }).catch((error)=>{
         console.log("Unable to connect " + error)
     })
+
+
+// app.use(validationMiddleware)
  app.use(fileUpload())
 app.set('view engine', 'ejs')
 
@@ -23,64 +35,25 @@ app.use(express.json())
 
 app.use(express.urlencoded({ extended: true })); // It helps in parsing form data which is in url-encoded form and helps to add the form data in req.body
 
-app.get('/',async(req,res)=>{
-
-    try {
-        const blogPosts = await BlogPost.find({})
-        res.render('index',{
-            blogPosts
-        })
-    } catch (error) {
-        console.log('Unable to fetch All blogposts' + error)
-    }
-
-    
-})
-
-
+app.get('/',homeController)
 
 app.get('/about',(req,res)=>{
     res.render('about')
 })
 
-
 app.get('/contact',(req,res)=>{
     res.render('contact')
 })
-
 
 app.get('/post',(req,res)=>{
     res.render('post')
 })
 
+app.get('/posts/new',newPostController )
 
-app.get('/posts/new', (req,res)=> {
-    res.render('create')
+app.get('/post/:id',getPostController)
 
-})
-
-app.get('/post/:id',async (req,res)=>{
-    const blogPost = await BlogPost.findById(req.params.id)
-    res.render('post',{blogPost})
-})
-
-app.post('/posts/store', async (req,res)=>{
-   
-    try {
-        const {title,description} = req.body
-        const image = req.files.image
-        image.mv(path.resolve(__dirname,'public/assets/img',image.name))
-       const blogPost = await BlogPost.create({
-            title,
-            body:description,
-            image:'/img/' + image.name
-        })
-        console.log(blogPost)
-        res.redirect('/')
-    } catch (error) {
-        console.log(error)
-    }
-})
+app.post('/posts/store', storePostController )
 
 
 app.listen(4000,()=>{
