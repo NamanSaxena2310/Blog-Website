@@ -12,6 +12,10 @@ const newPostController = require('./controller/newPost')
 const homeController = require('./controller/home')
 const getPostController = require('./controller/getPost')
 const storePostController = require('./controller/storePost')
+const newUserController = require('./controller/newUser')
+const storeUSerController = require('./controller/storeUser')
+const loginController = require('./controller/login')
+const loginUserController = require('./controller/loginUser')
 
 //Middlewares 
 const validationMiddleware = require('./middlewares/validationMiddleware')
@@ -37,13 +41,6 @@ app.use(express.urlencoded({ extended: true })); // It helps in parsing form dat
 
 app.get('/',homeController)
 
-app.get('/about',(req,res)=>{
-    res.render('about')
-})
-
-app.get('/contact',(req,res)=>{
-    res.render('contact')
-})
 
 app.get('/post',(req,res)=>{
     res.render('post')
@@ -55,6 +52,13 @@ app.get('/post/:id',getPostController)
 
 app.post('/posts/store', storePostController )
 
+app.get('/auth/register', newUserController)
+
+app.get('/auth/login',loginController)
+
+app.post('/users/register', storeUSerController)
+
+app.post('/users/login', loginUserController)
 
 app.listen(4000,()=>{
     console.log("App is running on port 4000")
